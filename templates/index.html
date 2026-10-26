@@ -3,247 +3,384 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SkyDesk – Airline Reservation</title>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;800&display=swap" rel="stylesheet">
+<title>Airline Booking System</title>
 <style>
-:root{--bg:#f3f6fa;--card:#fff;--ink:#14213d;--muted:#6b7a90;--line:#e1e7ef;--accent:#1d4ed8;--accent-soft:#e8efff;--ok:#0f766e;--bad:#b91c1c}
-*{box-sizing:border-box;margin:0}
-body{font-family:Manrope,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
-header{background:var(--ink);color:#fff;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-header h1{font-size:1.25rem;font-weight:800;letter-spacing:.3px}
-nav{display:flex;gap:4px}
-nav button{background:none;border:0;color:#b9c4d8;font:inherit;font-weight:600;padding:8px 16px;border-radius:8px;cursor:pointer;transition:.15s}
-nav button.on,nav button:hover{background:#fff;color:var(--ink)}
-main{max-width:920px;margin:28px auto;padding:0 16px}
-section{display:none}section.on{display:block}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:20px}
-h2{font-size:1.05rem;margin-bottom:14px}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
-label{display:flex;flex-direction:column;font-size:.8rem;color:var(--muted);font-weight:600;gap:4px;flex:1;min-width:130px}
-input{font:inherit;color:var(--ink);padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:#fff}
-input:focus{outline:2px solid var(--accent);border-color:transparent}
-.btn{font:inherit;font-weight:600;padding:9px 18px;border:0;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer;transition:.15s}
-.btn:hover{filter:brightness(1.12)}
-.btn.ghost{background:var(--accent-soft);color:var(--accent)}
-.btn.danger{background:#fde8e8;color:var(--bad)}
-.btn.sm{padding:6px 12px;font-size:.85rem}
-.flight{display:flex;align-items:center;gap:16px;padding:16px 0;border-top:1px solid var(--line);flex-wrap:wrap}
-.flight:first-of-type{border-top:0}
-.route{flex:1;min-width:220px}
-.route b{font-size:1.1rem}
-.route small,.meta{color:var(--muted);font-size:.85rem}
-.price{font-weight:800;font-size:1.15rem}
-.tag{display:inline-block;font-size:.75rem;font-weight:600;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
-.tag.ok{background:#d9f3ef;color:var(--ok)}.tag.bad{background:#fde8e8;color:var(--bad)}
-.empty{color:var(--muted);text-align:center;padding:24px 0}
-table{width:100%;border-collapse:collapse;font-size:.92rem}
-th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}
-th{color:var(--muted);font-weight:600;font-size:.82rem}
-tfoot td{font-weight:800;border-bottom:0}
-dialog{border:0;border-radius:14px;padding:24px;width:min(420px,92vw);box-shadow:0 20px 60px rgba(20,33,61,.3);margin:auto}
-dialog::backdrop{background:rgba(20,33,61,.5)}
-dialog form{display:flex;flex-direction:column;gap:12px}
-dialog .row{justify-content:flex-end;margin-top:6px}
-#toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:10px;opacity:0;pointer-events:none;transition:.25s}
-#toast.show{opacity:1;transform:translate(-50%,0)}#toast.err{background:var(--bad)}
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+:root{--ink:#000;--muted:#6a6a6a;--line:#dcdcdc;--danger:#c4161c}
+body{margin:0;background:#fff;color:var(--ink);font:16px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+.wrap{max-width:760px;min-height:100vh;margin:0 auto;padding:28px 24px 80px;display:flex;flex-direction:column}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+.brand{font-weight:700}
+.user{display:flex;gap:20px;align-items:baseline;font-size:.9rem;color:var(--muted)}
+#user-label{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+h1{font-size:1.75rem;font-weight:500;letter-spacing:-.01em;line-height:1.2;margin:0 0 28px}
+h2{font-size:1.2rem;font-weight:500;margin:0 0 6px}
+
+.auth{width:100%;max-width:340px;margin:auto}
+.wrap:has(#auth-section:not([hidden])) .top{justify-content:center}
+label{display:block;font-size:.85rem;color:var(--muted);margin:22px 0 0}
+input{display:block;width:100%;padding:8px 0;margin-top:2px;background:transparent;border:0;border-bottom:1px solid var(--ink);border-radius:0}
+input::placeholder{color:#a3a3a3}
+input:focus{outline:0;box-shadow:0 1px 0 var(--ink)}
+
+.btn{background:var(--ink);color:#fff;border:0;border-radius:2px;padding:11px 22px;font-weight:500;cursor:pointer}
+.btn:hover{background:#333}
+.btn.danger{background:var(--danger)}
+.btn.block{width:100%;margin-top:28px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.link{background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.link.danger{color:var(--danger)}
+.link:disabled{opacity:.5;cursor:not-allowed}
+.switch{margin:28px 0 0;color:var(--muted);font-size:.92rem}
+.switch .link{color:var(--ink)}
+.err{color:var(--danger);font-size:.9rem;min-height:1.4em;margin:14px 0 0}
+
+.nav{display:flex;gap:28px;margin:44px 0 36px;border-bottom:1px solid var(--line)}
+.nav button{background:none;border:0;padding:0 0 10px;margin-bottom:-1px;color:var(--muted);cursor:pointer;border-bottom:1px solid transparent}
+.nav button:hover{color:var(--ink)}
+.nav button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--ink)}
+
+.search{display:flex;gap:24px;align-items:flex-end;flex-wrap:wrap}
+.search>div{flex:1 1 180px}
+.search label{margin-top:0}
+
+.list{margin-top:36px;border-top:1px solid var(--line)}
+.item{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 28px;padding:20px 0;border-bottom:1px solid var(--line)}
+.item .main{flex:1 1 260px;min-width:0}
+.route{font-size:1.3rem;font-weight:500;letter-spacing:-.005em;line-height:1.3}
+.route i{font-style:normal;font-weight:400;color:var(--muted)}
+.meta{color:var(--muted);font-size:.92rem}
+.price{font-size:1.1rem;font-variant-numeric:tabular-nums}
+.seat{text-align:right}
+.seat b{display:block;font-size:1.3rem;font-weight:500;line-height:1.3}
+.seat span{color:var(--muted);font-size:.85rem}
+.acts{flex-basis:100%;display:flex;gap:28px;margin-top:6px;font-size:.92rem}
+
+.state{color:var(--muted);padding:40px 0}
+.state.bad{color:var(--danger)}
+
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:520px}
+th{text-align:left;font-weight:400;color:var(--muted);font-size:.9rem;padding:0 16px 12px 0;border-bottom:1px solid var(--ink)}
+td{padding:16px 16px 16px 0;border-bottom:1px solid var(--line)}
+th.num,td.num{text-align:right;padding-right:0;font-variant-numeric:tabular-nums}
+
+dialog{border:1px solid var(--ink);border-radius:2px;padding:28px;width:min(400px,calc(100vw - 32px));background:#fff;color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+.dlg-actions{display:flex;justify-content:flex-end;align-items:center;gap:24px;margin-top:28px}
+
+.toasts{position:fixed;left:24px;bottom:24px;right:24px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;pointer-events:none;z-index:50}
+.toast{background:var(--ink);color:#fff;padding:10px 16px;border-radius:2px;font-size:.92rem;max-width:380px}
+.toast.bad{background:var(--danger)}
 </style>
 </head>
 <body>
-<header>
-  <h1>SkyDesk</h1>
-  <nav>
-    <button data-tab="flights" class="on">Flights</button>
-    <button data-tab="bookings">My bookings</button>
-    <button data-tab="admin">Admin</button>
-  </nav>
-</header>
+<div class="wrap">
 
-<main>
-  <!-- FLIGHTS -->
-  <section id="flights" class="on">
-    <div class="panel">
-      <h2>Find a flight</h2>
-      <div class="row">
-        <label>From<input id="f-origin" placeholder="Chennai"></label>
-        <label>To<input id="f-dest" placeholder="Delhi"></label>
-        <label>Date<input id="f-date" type="date"></label>
-        <button class="btn" onclick="loadFlights()">Search</button>
-      </div>
+  <header class="top">
+    <div class="brand">Airline Booking System</div>
+    <div id="user-bar" class="user" hidden>
+      <span id="user-label"></span>
+      <button class="link" onclick="logout()">Sign out</button>
     </div>
-    <div class="panel" id="flight-list"></div>
+  </header>
+
+  <!-- AUTH -->
+  <section id="auth-section" class="auth">
+    <h1 id="auth-title">Sign in</h1>
+    <form onsubmit="submitAuth(event)" novalidate>
+      <div id="name-field" hidden>
+        <label for="name">Full name</label>
+        <input type="text" id="name" autocomplete="name">
+      </div>
+      <label for="email" style="margin-top:0">Email address</label>
+      <input type="email" id="email" autocomplete="email">
+      <label for="phone">Phone number</label>
+      <input type="tel" id="phone" autocomplete="tel" inputmode="numeric" maxlength="10" placeholder="10 digits">
+      <p id="auth-err" class="err" role="alert"></p>
+      <button id="auth-submit" type="submit" class="btn block" style="margin-top:12px">Sign in</button>
+    </form>
+    <p class="switch"><span id="switch-text">No account yet?</span> <button type="button" id="switch-btn" class="link" onclick="setMode(authMode === 'login' ? 'register' : 'login')">Register</button></p>
   </section>
 
-  <!-- MY BOOKINGS -->
-  <section id="bookings">
-    <div class="panel">
-      <h2>Find your bookings</h2>
-      <div class="row">
-        <label>Email used while booking<input id="b-email" type="email" placeholder="you@example.com"></label>
-        <button class="btn" onclick="loadBookings()">Show bookings</button>
-      </div>
-    </div>
-    <div class="panel" id="booking-list"><p class="empty">Enter your email to see your bookings.</p></div>
-  </section>
+  <!-- APP -->
+  <section id="app-section" hidden>
+    <nav class="nav">
+      <button data-view="search" aria-selected="true" onclick="searchFlights()">Flights</button>
+      <button data-view="bookings" aria-selected="false" onclick="loadMyBookings()">My bookings</button>
+      <button data-view="report" aria-selected="false" onclick="loadReport()">Sales report</button>
+    </nav>
 
-  <!-- ADMIN -->
-  <section id="admin">
-    <div class="panel">
-      <h2>Add a flight</h2>
-      <div class="row">
-        <label>Flight no.<input id="a-no" placeholder="AI777"></label>
-        <label>From<input id="a-origin"></label>
-        <label>To<input id="a-dest"></label>
-      </div>
-      <div class="row" style="margin-top:10px">
-        <label>Departure<input id="a-dep" type="datetime-local"></label>
-        <label>Price (₹)<input id="a-price" type="number" min="1"></label>
-        <label>Seats<input id="a-seats" type="number" min="1"></label>
-        <button class="btn" onclick="addFlight()">Add flight</button>
-      </div>
+    <div id="search-view">
+      <form class="search" onsubmit="searchFlights(event)">
+        <div><label for="origin">From</label><input type="text" id="origin" placeholder="Chennai" autocomplete="off"></div>
+        <div><label for="dest">To</label><input type="text" id="dest" placeholder="Delhi" autocomplete="off"></div>
+        <button type="submit" class="btn">Search</button>
+      </form>
+      <div id="flight-results" aria-live="polite"></div>
     </div>
-    <div class="panel"><h2>Manage flights</h2><div id="admin-flights"></div></div>
-    <div class="panel"><h2>Sales report</h2><div id="report"></div></div>
-  </section>
-</main>
 
-<!-- Booking dialog -->
-<dialog id="book-dlg">
-  <form onsubmit="submitBooking(event)">
-    <h2 id="book-title"></h2>
-    <label>Full name<input id="p-name" required></label>
-    <label>Email<input id="p-email" type="email" required></label>
-    <label>Phone (10 digits)<input id="p-phone" required></label>
-    <div class="row">
-      <button type="button" class="btn ghost" onclick="book_dlg.close()">Close</button>
-      <button class="btn">Confirm booking</button>
+    <div id="bookings-view" hidden>
+      <div id="tickets-list" aria-live="polite"></div>
+    </div>
+
+    <div id="report-view" hidden>
+      <div id="report-results" aria-live="polite"></div>
+    </div>
+  </section>
+</div>
+
+<dialog id="dlg">
+  <form id="dlg-form" novalidate>
+    <h2 id="dlg-title"></h2>
+    <p id="dlg-text" class="meta" style="margin:0"></p>
+    <input type="tel" id="dlg-input" inputmode="numeric" maxlength="10" aria-label="New phone number" placeholder="10 digits" style="margin-top:20px" hidden>
+    <p id="dlg-err" class="err" role="alert"></p>
+    <div class="dlg-actions">
+      <button type="button" id="dlg-cancel" class="link">Cancel</button>
+      <button type="submit" id="dlg-ok" class="btn"></button>
     </div>
   </form>
 </dialog>
 
-<!-- Edit passenger dialog -->
-<dialog id="edit-dlg">
-  <form onsubmit="submitEdit(event)">
-    <h2>Edit passenger details</h2>
-    <label>Full name<input id="e-name" required></label>
-    <label>Phone (10 digits)<input id="e-phone" required></label>
-    <div class="row">
-      <button type="button" class="btn ghost" onclick="edit_dlg.close()">Close</button>
-      <button class="btn">Save changes</button>
-    </div>
-  </form>
-</dialog>
-
-<div id="toast"></div>
+<div id="toasts" class="toasts" aria-live="polite"></div>
 
 <script>
-const $ = id => document.getElementById(id);
-const book_dlg = $("book-dlg"), edit_dlg = $("edit-dlg");
-let flightId = null, editId = null;
+    let currentUser = null;
+    let authMode = "login";
+    const PHONE = /^\d{10}$/;
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    const money = n => { const v = Number(n); return "\u20B9" + (isNaN(v) ? esc(n) : v.toLocaleString("en-IN")); };
 
-// helper: call the Flask API and return JSON
-async function api(url, method = "GET", body) {
-  const res = await fetch(url, {method, headers: {"Content-Type": "application/json"}, body: body && JSON.stringify(body)});
-  const data = await res.json();
-  if (!res.ok) { toast(data.error || "Something went wrong", true); throw new Error(data.error); }
-  return data;
-}
-function toast(msg, err) {
-  const t = $("toast"); t.textContent = msg; t.className = "show" + (err ? " err" : "");
-  setTimeout(() => t.className = "", 2800);
-}
-const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const fmt = d => new Date(d.replace(" ", "T")).toLocaleString("en-IN", {day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"});
-const inr = n => "₹" + Number(n).toLocaleString("en-IN");
+    // --- UTILS ---
+    function toast(msg, bad) {
+        const t = document.createElement("div");
+        t.className = "toast" + (bad ? " bad" : "");
+        t.textContent = msg;
+        $("toasts").appendChild(t);
+        setTimeout(() => t.remove(), 4000);
+    }
 
-// tabs
-document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
-  document.querySelectorAll("nav button, section").forEach(e => e.classList.remove("on"));
-  b.classList.add("on"); $(b.dataset.tab).classList.add("on");
-  if (b.dataset.tab === "admin") loadAdmin();
-});
+    function showSection(id) {
+        ["search", "bookings", "report"].forEach(v => { $(v + "-view").hidden = v !== id; });
+        document.querySelectorAll("[data-view]").forEach(b =>
+            b.setAttribute("aria-selected", b.dataset.view === id));
+    }
 
-// ----- flights -----
-async function loadFlights() {
-  const q = new URLSearchParams({origin: $("f-origin").value, destination: $("f-dest").value, date: $("f-date").value});
-  const list = await api("/api/flights?" + q);
-  $("flight-list").innerHTML = list.length ? list.map(f => `
-    <div class="flight">
-      <div class="route"><b>${esc(f.origin)} → ${esc(f.destination)}</b><br>
-        <small>${esc(f.flight_no)} · ${fmt(f.departure)}</small></div>
-      <span class="tag ${f.available ? "ok" : "bad"}">${f.available ? f.available + " seats left" : "Full"}</span>
-      <span class="price">${inr(f.price)}</span>
-      <button class="btn sm" ${f.available ? "" : "disabled"} onclick="openBook(${f.flight_id}, '${esc(f.flight_no)} · ${esc(f.origin)} → ${esc(f.destination)}')">Book</button>
-    </div>`).join("") : `<p class="empty">No flights match your search.</p>`;
-}
-function openBook(id, title) {
-  flightId = id; $("book-title").textContent = title; book_dlg.showModal();
-}
-async function submitBooking(e) {
-  e.preventDefault();
-  try {
-    const r = await api("/api/book", "POST", {flight_id: flightId, name: $("p-name").value, email: $("p-email").value, phone: $("p-phone").value});
-    book_dlg.close(); toast(`Booked! Booking #${r.booking_id}, seat ${r.seat_no}`);
-    $("b-email").value = $("p-email").value; loadFlights();
-  } catch {}
-}
+    async function api(url, method = "GET", body = null) {
+        const options = { method, headers: { "Content-Type": "application/json" } };
+        if (body) options.body = JSON.stringify(body);
+        let res;
+        try { res = await fetch(url, options); }
+        catch { throw new Error("Cannot reach the server. Check your connection and try again."); }
+        let data = null;
+        try { data = await res.json(); } catch {}
+        if (!res.ok) throw new Error((data && data.error) || "Something went wrong. Please try again.");
+        return data;
+    }
 
-// ----- my bookings -----
-async function loadBookings() {
-  const list = await api("/api/bookings?email=" + encodeURIComponent($("b-email").value));
-  $("booking-list").innerHTML = list.length ? list.map(b => `
-    <div class="flight">
-      <div class="route"><b>${esc(b.origin)} → ${esc(b.destination)}</b><br>
-        <small>${esc(b.flight_no)} · ${fmt(b.departure)} · Seat ${b.seat_no ?? "–"} · Booking #${b.booking_id}</small><br>
-        <small>${esc(b.name)} · ${esc(b.phone)}</small></div>
-      <span class="tag ${b.status === "CONFIRMED" ? "ok" : "bad"}">${b.status === "CONFIRMED" ? "Confirmed" : "Cancelled"}</span>
-      <span class="price">${inr(b.price)}</span>
-      <button class="btn ghost sm" onclick="openEdit(${b.passenger_id}, '${esc(b.name)}', '${esc(b.phone)}')">Edit</button>
-      ${b.status === "CONFIRMED" ? `<button class="btn danger sm" onclick="cancelBooking(${b.booking_id})">Cancel</button>` : ""}
-    </div>`).join("") : `<p class="empty">No bookings found for this email.</p>`;
-}
-async function cancelBooking(id) {
-  if (!confirm("Cancel this booking?")) return;
-  await api("/api/bookings/" + id, "DELETE"); toast("Booking cancelled"); loadBookings();
-}
-function openEdit(id, name, phone) {
-  editId = id; $("e-name").value = name; $("e-phone").value = phone; edit_dlg.showModal();
-}
-async function submitEdit(e) {
-  e.preventDefault();
-  try {
-    await api("/api/passengers/" + editId, "PUT", {name: $("e-name").value, phone: $("e-phone").value});
-    edit_dlg.close(); toast("Details updated"); loadBookings();
-  } catch {}
-}
+    // Dialog used in place of confirm() and prompt().
+    function ask(o) {
+        return new Promise(resolve => {
+            const d = $("dlg"), inp = $("dlg-input"), err = $("dlg-err");
+            $("dlg-title").textContent = o.title;
+            $("dlg-text").textContent = o.text || "";
+            inp.hidden = !o.input; inp.value = ""; err.textContent = "";
+            $("dlg-ok").textContent = o.confirm;
+            $("dlg-ok").className = "btn" + (o.danger ? " danger" : "");
+            $("dlg-cancel").textContent = o.cancel || "Cancel";
+            $("dlg-form").onsubmit = e => {
+                e.preventDefault();
+                if (o.input && !PHONE.test(inp.value.trim())) {
+                    err.textContent = "Phone number must be exactly 10 digits.";
+                    inp.focus();
+                    return;
+                }
+                d.close("ok");
+            };
+            $("dlg-cancel").onclick = () => d.close("cancel");
+            d.onclose = () => resolve(d.returnValue === "ok" ? (o.input ? inp.value.trim() : true) : null);
+            d.returnValue = "";
+            d.showModal();
+            if (o.input) inp.focus();
+        });
+    }
 
-// ----- admin -----
-async function addFlight() {
-  try {
-    await api("/api/flights", "POST", {flight_no: $("a-no").value, origin: $("a-origin").value, destination: $("a-dest").value,
-      departure: $("a-dep").value, price: $("a-price").value, total_seats: $("a-seats").value});
-    toast("Flight added");
-    ["a-no","a-origin","a-dest","a-dep","a-price","a-seats"].forEach(i => $(i).value = "");
-    loadAdmin();
-  } catch {}
-}
-async function removeFlight(id) {
-  if (!confirm("Delete this flight?")) return;
-  try { await api("/api/flights/" + id, "DELETE"); toast("Flight deleted"); loadAdmin(); } catch {}
-}
-async function loadAdmin() {
-  const [flights, report] = await Promise.all([api("/api/flights"), api("/api/report")]);
-  $("admin-flights").innerHTML = `<table><tr><th>Flight</th><th>Route</th><th>Departure</th><th>Price</th><th></th></tr>` +
-    flights.map(f => `<tr><td>${esc(f.flight_no)}</td><td>${esc(f.origin)} → ${esc(f.destination)}</td><td>${fmt(f.departure)}</td>
-      <td>${inr(f.price)}</td><td><button class="btn danger sm" onclick="removeFlight(${f.flight_id})">Delete</button></td></tr>`).join("") + `</table>`;
-  const tb = report.reduce((s, r) => s + r.bookings, 0), tr = report.reduce((s, r) => s + r.revenue, 0);
-  $("report").innerHTML = `<table><tr><th>Flight</th><th>Route</th><th>Seats filled</th><th>Revenue</th></tr>` +
-    report.map(r => `<tr><td>${esc(r.flight_no)}</td><td>${esc(r.origin)} → ${esc(r.destination)}</td>
-      <td>${r.bookings} / ${r.total_seats}</td><td>${inr(r.revenue)}</td></tr>`).join("") +
-    `<tfoot><tr><td colspan="2">Total</td><td>${tb}</td><td>${inr(tr)}</td></tr></tfoot></table>`;
-}
+    // --- AUTHENTICATION ---
+    function setMode(m) {
+        authMode = m;
+        const reg = m === "register";
+        $("name-field").hidden = !reg;
+        $("auth-title").textContent = reg ? "Create account" : "Sign in";
+        $("auth-submit").textContent = reg ? "Create account" : "Sign in";
+        $("switch-text").textContent = reg ? "Already registered?" : "No account yet?";
+        $("switch-btn").textContent = reg ? "Sign in" : "Register";
+        $("auth-err").textContent = "";
+    }
 
-loadFlights();
+    async function submitAuth(e) {
+        e.preventDefault();
+        const name = $("name").value.trim(), email = $("email").value.trim(), phone = $("phone").value.trim();
+        const err = $("auth-err");
+        if (authMode === "register" && !name) { err.textContent = "Enter your full name."; return $("name").focus(); }
+        if (!/^\S+@\S+\.\S+$/.test(email)) { err.textContent = "Enter a valid email address."; return $("email").focus(); }
+        if (!PHONE.test(phone)) { err.textContent = "Phone number must be exactly 10 digits."; return $("phone").focus(); }
+        err.textContent = "";
+        const btn = $("auth-submit");
+        btn.disabled = true;
+        try {
+            currentUser = authMode === "register"
+                ? await api("/api/register", "POST", { name, email, phone })
+                : await api("/api/login", "POST", { email, phone });
+            $("auth-section").hidden = true;
+            $("app-section").hidden = false;
+            $("user-bar").hidden = false;
+            $("user-label").textContent = currentUser.name || currentUser.email || email;
+            toast(authMode === "register" ? "Account created. You are signed in." : "Signed in.");
+            searchFlights();
+        } catch (ex) {
+            err.textContent = ex.message;
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    function logout() {
+        currentUser = null;
+        ["name", "email", "phone", "origin", "dest"].forEach(id => $(id).value = "");
+        $("flight-results").innerHTML = "";
+        $("app-section").hidden = true;
+        $("user-bar").hidden = true;
+        $("auth-section").hidden = false;
+        setMode("login");
+    }
+
+    // --- CORE FEATURES ---
+    async function searchFlights(e) {
+        if (e) e.preventDefault();
+        showSection("search");
+        const box = $("flight-results");
+        box.innerHTML = '<p class="state">Searching...</p>';
+        const q = new URLSearchParams({ origin: $("origin").value.trim(), destination: $("dest").value.trim() });
+        try {
+            const data = await api("/api/flights?" + q);
+            if (!data.length) {
+                box.innerHTML = '<p class="state">No flights match that route. Try a different city, or clear both fields to see everything.</p>';
+                return;
+            }
+            box.innerHTML = '<div class="list">' + data.map(f => `
+                <div class="item">
+                    <div class="main">
+                        <div class="route">${esc(f.origin)} <i>to</i> ${esc(f.destination)}</div>
+                        <div class="meta">Flight ${esc(f.flight_no)}, departs ${esc(f.departure)}</div>
+                    </div>
+                    <div class="price">${money(f.price)}</div>
+                    <button class="link" onclick="bookFlight(${Number(f.flight_id)}, this)">Book seat</button>
+                </div>`).join("") + "</div>";
+        } catch (ex) {
+            box.innerHTML = `<p class="state bad">${esc(ex.message)}</p>`;
+        }
+    }
+
+    async function bookFlight(flight_id, btn) {
+        btn.disabled = true;
+        btn.textContent = "Booking...";
+        try {
+            const res = await api("/api/book", "POST", { passenger_id: currentUser.passenger_id, flight_id });
+            toast(`Booking confirmed. Your seat is ${res.seat_no}.`);
+            loadMyBookings();
+        } catch (ex) {
+            toast(ex.message, true);
+            btn.disabled = false;
+            btn.textContent = "Book seat";
+        }
+    }
+
+    async function loadMyBookings() {
+        showSection("bookings");
+        const box = $("tickets-list");
+        box.innerHTML = '<p class="state">Loading...</p>';
+        try {
+            const data = await api(`/api/bookings?email=${encodeURIComponent(currentUser.email)}`);
+            if (!data.length) {
+                box.innerHTML = '<p class="state">You have no bookings yet. <button class="link" style="color:var(--ink)" onclick="searchFlights()">Search flights</button></p>';
+                return;
+            }
+            box.innerHTML = '<div class="list">' + data.map(b => `
+                <div class="item">
+                    <div class="main">
+                        <div class="route">${esc(b.origin)} <i>to</i> ${esc(b.destination)}</div>
+                        <div class="meta">Flight ${esc(b.flight_no)}, phone on file ${esc(b.phone)}</div>
+                    </div>
+                    <div class="seat"><b>${esc(b.seat_no)}</b><span>Seat</span></div>
+                    <div class="acts">
+                        <button class="link" onclick="updatePhone(${Number(b.passenger_id)})">Change phone number</button>
+                        <button class="link danger" onclick="cancelBooking(${Number(b.booking_id)})">Cancel booking</button>
+                    </div>
+                </div>`).join("") + "</div>";
+        } catch (ex) {
+            box.innerHTML = `<p class="state bad">${esc(ex.message)}</p>`;
+        }
+    }
+
+    async function updatePhone(passenger_id) {
+        const newPhone = await ask({
+            title: "Change phone number",
+            text: "Enter the new 10-digit phone number.",
+            input: true,
+            confirm: "Save"
+        });
+        if (!newPhone) return;
+        try {
+            await api(`/api/passengers/${passenger_id}`, "PUT", { phone: newPhone });
+            toast("Phone number updated.");
+            loadMyBookings();
+        } catch (ex) { toast(ex.message, true); }
+    }
+
+    async function cancelBooking(booking_id) {
+        const ok = await ask({
+            title: "Cancel this booking?",
+            text: "The booking will be permanently deleted. This cannot be undone.",
+            confirm: "Delete booking",
+            cancel: "Keep booking",
+            danger: true
+        });
+        if (!ok) return;
+        try {
+            await api(`/api/bookings/${booking_id}`, "DELETE");
+            toast("Booking deleted.");
+            loadMyBookings();
+        } catch (ex) { toast(ex.message, true); }
+    }
+
+    async function loadReport() {
+        showSection("report");
+        const box = $("report-results");
+        box.innerHTML = '<p class="state">Loading...</p>';
+        try {
+            const data = await api("/api/report");
+            if (!data.length) { box.innerHTML = '<p class="state">There are no flights to report on yet.</p>'; return; }
+            let html = '<div class="table-wrap"><table><tr><th>Flight</th><th>Route</th><th>Tickets sold</th><th class="num">Revenue</th></tr>';
+            data.forEach(r => {
+                const pct = r.total_seats ? Math.round(r.bookings / r.total_seats * 100) : 0;
+                html += `<tr>
+                    <td>${esc(r.flight_no)}</td>
+                    <td>${esc(r.origin)} to ${esc(r.destination)}</td>
+                    <td>${esc(r.bookings)} of ${esc(r.total_seats)} (${pct}%)</td>
+                    <td class="num">${money(r.revenue)}</td>
+                </tr>`;
+            });
+            box.innerHTML = html + "</table></div>";
+        } catch (ex) {
+            box.innerHTML = `<p class="state bad">${esc(ex.message)}</p>`;
+        }
+    }
 </script>
 </body>
 </html>
