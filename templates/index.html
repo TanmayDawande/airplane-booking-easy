@@ -194,7 +194,7 @@ async function loadBookings() {
   $("booking-list").innerHTML = list.length ? list.map(b => `
     <div class="flight">
       <div class="route"><b>${esc(b.origin)} → ${esc(b.destination)}</b><br>
-        <small>${esc(b.flight_no)} · ${fmt(b.departure)} · Seat ${b.seat_no} · Booking #${b.booking_id}</small><br>
+        <small>${esc(b.flight_no)} · ${fmt(b.departure)} · Seat ${b.seat_no ?? "–"} · Booking #${b.booking_id}</small><br>
         <small>${esc(b.name)} · ${esc(b.phone)}</small></div>
       <span class="tag ${b.status === "CONFIRMED" ? "ok" : "bad"}">${b.status === "CONFIRMED" ? "Confirmed" : "Cancelled"}</span>
       <span class="price">${inr(b.price)}</span>
